@@ -1,6 +1,7 @@
 import { DefaultPageTitle } from "@/components/default/default-page-title";
 import { DefaultPageWrapper } from "@/components/default/default-page-wrapper";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -15,6 +16,7 @@ export function Income() {
   return (
     <DefaultPageWrapper className="content-start gap-5">
       <DefaultPageTitle title="Receitas" />
+      <Separator />
       <Button>Adicionar receita</Button>
       <div className="flex-container">
         <Table>

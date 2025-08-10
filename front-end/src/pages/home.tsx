@@ -1,4 +1,3 @@
-import { DefaultPageTitle } from "@/components/default/default-page-title";
 import { DefaultPageWrapper } from "@/components/default/default-page-wrapper";
 import {
   Card,
@@ -7,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -14,28 +14,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 export function Home() {
   return (
     <DefaultPageWrapper className="content-start gap-5">
-      <DefaultPageTitle title="Home" />
-      <div className="flex-container justify-end">
-        <Select defaultValue="1">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1">1 mês</SelectItem>
-            <SelectItem value="3">3 meses</SelectItem>
-            <SelectItem value="6">6 meses</SelectItem>
-            <SelectItem value="12">1 ano</SelectItem>
-            <SelectItem value="24">2 ano</SelectItem>
-            <SelectItem value="36">3 ano</SelectItem>
-            <SelectItem value="60">5 ano</SelectItem>
-            <SelectItem value="total">Total</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex-container justify-between items-center">
+        <h1 className="text-4xl font-bold">Home</h1>
+        <div className="flex gap-2">
+          <Label>Período:</Label>
+          <Select defaultValue="1">
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">1 mês</SelectItem>
+              <SelectItem value="3">3 meses</SelectItem>
+              <SelectItem value="6">6 meses</SelectItem>
+              <SelectItem value="12">1 ano</SelectItem>
+              <SelectItem value="24">2 ano</SelectItem>
+              <SelectItem value="36">3 ano</SelectItem>
+              <SelectItem value="60">5 ano</SelectItem>
+              <SelectItem value="total">Total</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+      <Separator />
       <div className="flex-container gap-5">
         <Card className="fill">
           <CardHeader>
