@@ -1,4 +1,4 @@
-import { Home, DollarSign, ShoppingBagIcon } from "lucide-react";
+import { Home, DollarSign, ShoppingBagIcon, Settings } from "lucide-react";
 
 import {
   Sidebar,
@@ -24,8 +24,13 @@ const items = [
   },
   {
     title: "Despesas",
-    url: "/expenses",
+    url: "/expense",
     icon: ShoppingBagIcon,
+  },
+  {
+    title: "Configurações",
+    url: "/settings",
+    icon: Settings,
   },
 ];
 
