@@ -13,7 +13,6 @@ export class User {
     this._createdAt = new Date();
   }
 
-  // Getters
   get id(): number {
     return this._id;
   }
@@ -34,7 +33,6 @@ export class User {
     return this._createdAt;
   }
 
-  // Método para retornar dados públicos (sem senha)
   toPublic(): object {
     return {
       id: this._id,
@@ -44,8 +42,7 @@ export class User {
     };
   }
 
-  // Método para validar senha no login
-  verificarSenha(senhaInformada: string): boolean {
-    return this._password === senhaInformada;
+  verifyPassword(password: string): boolean {
+    return this._password === password;
   }
 }
