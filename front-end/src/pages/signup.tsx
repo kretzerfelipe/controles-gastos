@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from '@/components/ui/password-input';
 
 export function Signup() {
   return (
@@ -50,9 +51,8 @@ export function Signup() {
                   <Label className="flex-container" htmlFor="password">
                     Senha
                   </Label>
-                  <Input
+                  <PasswordInput
                     id="password"
-                    type="password"
                     placeholder="******"
                     className="flex-container"
                   />
@@ -61,9 +61,8 @@ export function Signup() {
                   <Label className="flex-container" htmlFor="confirm-password">
                     Confire sua senha
                   </Label>
-                  <Input
+                  <PasswordInput
                     id="confirm-password"
-                    type="password"
                     placeholder="******"
                     className="flex-container"
                   />
