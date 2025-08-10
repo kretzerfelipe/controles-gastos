@@ -130,3 +130,12 @@
   flex-basis: 0;
   flex-grow: 1;
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
