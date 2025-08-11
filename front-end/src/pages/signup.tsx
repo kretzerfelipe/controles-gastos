@@ -9,11 +9,42 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PasswordInput } from '@/components/ui/password-input';
+import { PasswordInput } from "@/components/ui/password-input";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z
+  .object({
+    name: z.string().min(2).max(100),
+    email: z.email(),
+    password: z.string().min(6).max(100),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas precisam ser iguais",
+    path: ["confirmPassword"], // aponta o erro para o campo confirmPassword
+  });
 
 export function Signup() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = (data: z.infer<typeof loginSchema>) => {
+    console.log(data);
+  };
+
   return (
-    <div className="flex-container min-h-dvh bg-background items-center justify-center p-5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex-container min-h-dvh bg-background items-center justify-center p-5"
+    >
       <Card className="w-full full max-w-md min">
         <CardHeader>
           <CardTitle>Criar conta</CardTitle>
@@ -22,7 +53,7 @@ export function Signup() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <div>
             <div className="flex flex-col gap-6">
               <div className="flex-container gap-2">
                 <Label className="flex-container" htmlFor="name">
@@ -33,7 +64,22 @@ export function Signup() {
                   type="text"
                   placeholder="Fernando"
                   className="flex-container"
+                  {...register("name")}
+                  onChange={() => {
+                    clearErrors("name");
+                  }}
                 />
+                {errors.name && (
+                  <span className="text-red-400">
+                    {errors.name.message ===
+                    "Too small: expected string to have >=2 characters"
+                      ? "Nome muito curto"
+                      : errors.name.message ===
+                        "Too big: expected string to have <=100 characters"
+                      ? "Nome muito longo"
+                      : errors.name.message}
+                  </span>
+                )}
               </div>
               <div className="flex-container gap-2">
                 <Label className="flex-container" htmlFor="email">
@@ -41,12 +87,23 @@ export function Signup() {
                 </Label>
                 <Input
                   id="email"
-                  type="email"
+                  type="text"
                   placeholder="fernando@email.com"
                   className="flex-container"
+                  {...register("email")}
+                  onChange={() => {
+                    clearErrors("email");
+                  }}
                 />
+                {errors.email && (
+                  <p className="text-red-400">
+                    {errors.email.message === "Invalid email address"
+                      ? "Email inválido"
+                      : errors.email.message}
+                  </p>
+                )}
               </div>
-              <div className="flex-container gap-2">
+              <div className="flex-container gap-2 items-start">
                 <div className="flex-container fill gap-2">
                   <Label className="flex-container" htmlFor="password">
                     Senha
@@ -55,7 +112,22 @@ export function Signup() {
                     id="password"
                     placeholder="******"
                     className="flex-container"
+                    {...register("password")}
+                    onChange={() => {
+                      clearErrors("password");
+                    }}
                   />
+                  {errors.password && (
+                    <span className="text-red-400">
+                      {errors.password.message ===
+                      "Too small: expected string to have >=6 characters"
+                        ? "Senha muito curta"
+                        : errors.password.message ===
+                          "Too big: expected string to have <=100 characters"
+                        ? "Senha muito longa"
+                        : errors.password.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex-container fill gap-2">
                   <Label className="flex-container" htmlFor="confirm-password">
@@ -65,11 +137,20 @@ export function Signup() {
                     id="confirm-password"
                     placeholder="******"
                     className="flex-container"
+                    {...register("confirmPassword")}
+                    onChange={() => {
+                      clearErrors("confirmPassword");
+                    }}
                   />
+                  {errors.confirmPassword && (
+                    <span className="text-red-400">
+                      {errors.confirmPassword.message}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
-          </form>
+          </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button type="submit" className="w-full">
@@ -84,6 +165,6 @@ export function Signup() {
           </p>
         </CardFooter>
       </Card>
-    </div>
+    </form>
   );
 }
