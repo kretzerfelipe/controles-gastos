@@ -17,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { postAuthRegister } from "@/api/auth/post-auth-register";
 import { queryClient } from "@/lib/react-query";
+import { useAuthContext } from "@/app";
 
 const loginSchema = z
   .object({
@@ -40,6 +41,8 @@ export function Signup() {
     resolver: zodResolver(loginSchema),
   });
 
+  const { setUser } = useAuthContext()
+
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const registerMutation = useMutation({
@@ -47,6 +50,7 @@ export function Signup() {
     onSuccess: (data) => {
       queryClient.setQueryData(["auth"], () => {
         localStorage.setItem("access_token", data.access_token);
+        setUser(data.user)
         return data.user;
       });
     },

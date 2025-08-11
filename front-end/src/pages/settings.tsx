@@ -100,13 +100,13 @@ export function Settings() {
         <Separator orientation="vertical" className="h-full" />
         <div className="flex-container fill gap-5 content-start justify-center">
           <div className="flex-container justify-between items-center">
-            <h2 className="text-xl">Categorias de Receitas</h2>
+            <h2 className="text-xl">Categorias de Despesas</h2>
             <Dialog
               open={openExpenseDialog}
               onOpenChange={setOpenExpenseDialog}
             >
               <DialogTrigger>
-                <Button>Adicionar categoria receita</Button>
+                <Button>Adicionar categoria Despesas</Button>
               </DialogTrigger>
               <DialogContent>
                 <ExpenseCategoryForm
