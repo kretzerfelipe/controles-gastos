@@ -271,11 +271,11 @@ function ExpenseCategoryForm({
   useEffect(() => {
     setTimeout(() => {
       reset({
-        color: categoryToEdit?._color as keyof typeof COLOR_CLASSES,
-        icon: categoryToEdit?._icon as keyof typeof ICON_CLASSES,
-        name: categoryToEdit?._name,
+        color: (categoryToEdit?._color as keyof typeof COLOR_CLASSES) || "gray",
+        icon: (categoryToEdit?._icon as keyof typeof ICON_CLASSES) || "money",
+        name: categoryToEdit?._name || "",
       });
-    }, 100);
+    }, 10);
   }, [categoryToEdit]);
 
   const color = watch("color");
@@ -448,11 +448,11 @@ function IncomeCategoryForm({
   useEffect(() => {
     setTimeout(() => {
       reset({
-        color: categoryToEdit?._color as keyof typeof COLOR_CLASSES,
-        icon: categoryToEdit?._icon as keyof typeof ICON_CLASSES,
-        name: categoryToEdit?._name,
+        color: (categoryToEdit?._color as keyof typeof COLOR_CLASSES) || "gray",
+        icon: (categoryToEdit?._icon as keyof typeof ICON_CLASSES) || "money",
+        name: categoryToEdit?._name || "",
       });
-    }, 100);
+    }, 10);
   }, [categoryToEdit]);
 
   const color = watch("color");
