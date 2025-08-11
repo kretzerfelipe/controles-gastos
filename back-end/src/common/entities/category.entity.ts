@@ -5,6 +5,7 @@ export class Category {
   private _name: string;
   private _color: string;
   private _icon: string;
+  private _type: 'income' | 'expense';
   private _userId: number;
   private _createdAt: Date;
 
@@ -13,6 +14,7 @@ export class Category {
     name: string,
     color: string,
     icon: string,
+    type: 'income' | 'expense',
     userId: number,
     createdAt?: Date,
   ) {
@@ -20,6 +22,7 @@ export class Category {
     this._name = name;
     this._color = color;
     this._icon = icon;
+    this._type = type;
     this._userId = userId;
     this._createdAt = createdAt || new Date();
   }
@@ -30,6 +33,7 @@ export class Category {
       prismaCategory.name,
       prismaCategory.color,
       prismaCategory.icon,
+      prismaCategory.type as 'income' | 'expense',
       prismaCategory.userId,
       prismaCategory.createdAt,
     );
@@ -49,6 +53,10 @@ export class Category {
 
   get icon(): string {
     return this._icon;
+  }
+
+  get type(): 'income' | 'expense' {
+    return this._type;
   }
 
   get userId(): number {

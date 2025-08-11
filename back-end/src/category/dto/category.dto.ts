@@ -9,6 +9,7 @@ export class CreateCategoryDto {
   name: string;
   color: string;
   icon: string;
+  type: 'income' | 'expense';
 }
 
 export class UpdateCategoryDto {

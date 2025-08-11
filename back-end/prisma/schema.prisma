@@ -34,6 +34,7 @@ model Category {
   name      String
   color     String
   icon      String
+  type      String
   userId    Int      @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
 

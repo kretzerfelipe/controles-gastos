@@ -12,8 +12,14 @@ import {
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  async findAllByUserId(userId: number): Promise<CategoryResponseDto> {
-    const categories = await this.categoryRepository.findAllByUserId(userId);
+  async findAllByUserId(
+    userId: number,
+    type?: 'income' | 'expense',
+  ): Promise<CategoryResponseDto> {
+    const categories = await this.categoryRepository.findAllByUserId(
+      userId,
+      type,
+    );
     return new CategoryResponseDto(categories);
   }
 
@@ -25,6 +31,7 @@ export class CategoryService {
       createData.name,
       createData.color,
       createData.icon,
+      createData.type,
       userId,
     );
     return new SingleCategoryResponseDto(category);

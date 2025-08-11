@@ -5,11 +5,15 @@ import { Category } from '../entities/category.entity';
 
 export interface ICategoryRepository {
   findById(id: number): Promise<Category>;
-  findAllByUserId(userId: number): Promise<Category[]>;
+  findAllByUserId(
+    userId: number,
+    type?: 'income' | 'expense',
+  ): Promise<Category[]>;
   create(
     name: string,
     color: string,
     icon: string,
+    type: 'income' | 'expense',
     userId: number,
   ): Promise<Category>;
   update(category: Category): Promise<Category>;
@@ -32,9 +36,12 @@ export class CategoryRepository implements ICategoryRepository {
     return Category.fromPrisma(prismaCategory);
   }
 
-  async findAllByUserId(userId: number): Promise<Category[]> {
+  async findAllByUserId(
+    userId: number,
+    type?: 'income' | 'expense',
+  ): Promise<Category[]> {
     const prismaCategories = await this.prisma.category.findMany({
-      where: { userId },
+      where: { userId, ...(type ? { type } : {}) },
     });
 
     if (!prismaCategories) {
@@ -50,6 +57,7 @@ export class CategoryRepository implements ICategoryRepository {
     name: string,
     color: string,
     icon: string,
+    type: 'income' | 'expense',
     userId: number,
   ): Promise<Category> {
     try {
@@ -58,6 +66,7 @@ export class CategoryRepository implements ICategoryRepository {
           name,
           color,
           icon,
+          type,
           userId,
         },
       });
