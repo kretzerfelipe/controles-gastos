@@ -18,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/react-query";
 import { useState } from "react";
 import type { AxiosError } from "axios";
+import { useAuthContext } from "@/app";
 
 const loginSchema = z.object({
   email: z.email(),
@@ -25,6 +26,7 @@ const loginSchema = z.object({
 });
 
 export function Login() {
+  const { setUser } = useAuthContext();
   const {
     register,
     handleSubmit,
@@ -41,6 +43,7 @@ export function Login() {
     onSuccess: (data) => {
       queryClient.setQueryData(["auth"], () => {
         localStorage.setItem("access_token", data.access_token);
+        setUser(data.user);
         return data.user;
       });
     },
