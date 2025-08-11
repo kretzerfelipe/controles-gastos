@@ -6,9 +6,9 @@ export const putAuthMe = async ({
   name,
   email,
 }: {
-  id: 1;
-  name: "Felipe";
-  email: "felipegk2006@gmail.com";
+  id: number;
+  name: string;
+  email: string;
 }): Promise<User> => {
   const response = await api.put<{ user: User }>(`/auth/me`, {
     id,
