@@ -41,11 +41,7 @@ export class CategoryRepository implements ICategoryRepository {
     type?: 'income' | 'expense' | 'all',
   ): Promise<Category[]> {
     const finalType =
-      type === 'income'
-        ? 'income'
-        : type === 'expense'
-          ? 'exmpense'
-          : undefined;
+      type === 'income' ? 'income' : type === 'expense' ? 'expense' : undefined;
     const prismaCategories = await this.prisma.category.findMany({
       where: { userId, ...(finalType ? { type: finalType } : {}) },
     });
