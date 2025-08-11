@@ -6,11 +6,16 @@ import { Signup } from "@/pages/signup";
 import { Income } from "@/pages/income";
 import { Expense } from "@/pages/expense";
 import { Settings } from "@/pages/settings";
+import { NonProtectedRoute, ProtectedRoute } from "./protected-route";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <PublicLayout />,
+    element: (
+      <ProtectedRoute>
+        <PublicLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: "/", element: <Home /> },
       { path: "/income", element: <Income /> },
@@ -20,10 +25,18 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <NonProtectedRoute>
+        <Login />
+      </NonProtectedRoute>
+    ),
   },
   {
     path: "/signup",
-    element: <Signup />,
+    element: (
+      <NonProtectedRoute>
+        <Signup />
+      </NonProtectedRoute>
+    ),
   },
 ]);

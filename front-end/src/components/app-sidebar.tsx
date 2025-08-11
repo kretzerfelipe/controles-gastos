@@ -3,14 +3,16 @@ import { Home, DollarSign, ShoppingBagIcon, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuthContext } from "@/app";
+import { Button } from "./ui/button";
 
-// Menu items.
 const items = [
   {
     title: "Home",
@@ -35,9 +37,11 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { user } = useAuthContext();
+
   return (
     <Sidebar>
-      <SidebarContent>
+      <SidebarContent className="h-full justify-between">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -54,6 +58,17 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <SidebarFooter>
+          <Button
+            variant={"ghost"}
+            className="flex flex-col h-15 justify-start text-start gap-1"
+          >
+            <span className="flex-container">{user?.name}</span>
+            <span className="flex-container text-sm text-muted-foreground">
+              {user?.email}
+            </span>
+          </Button>
+        </SidebarFooter>
       </SidebarContent>
     </Sidebar>
   );

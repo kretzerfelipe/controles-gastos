@@ -13,10 +13,15 @@ import { PasswordInput } from "@/components/ui/password-input";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { postAuthLogin } from "@/api/auth/post-auth-login";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/react-query";
+import { useState } from "react";
+import type { AxiosError } from "axios";
 
 const loginSchema = z.object({
   email: z.email(),
-  password: z.string().min(6).max(100),
+  password: z.string(),
 });
 
 export function Login() {
@@ -29,8 +34,27 @@ export function Login() {
     resolver: zodResolver(loginSchema),
   });
 
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  const loginMutation = useMutation({
+    mutationFn: postAuthLogin,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["auth"], () => {
+        localStorage.setItem("access_token", data.access_token);
+        return data.user;
+      });
+    },
+    onError: (error: AxiosError) => {
+      if (error.status === 401) {
+        setLoginError("Email ou senha inválidos");
+      } else {
+        setLoginError("Erro ao fazer login");
+      }
+    },
+  });
+
   const onSubmit = (data: z.infer<typeof loginSchema>) => {
-    console.log(data);
+    loginMutation.mutateAsync(data);
   };
 
   return (
@@ -46,41 +70,40 @@ export function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="string"
-                  placeholder="fernando@email.com"
-                  {...register("email")}
-                  onChange={() => {
-                    clearErrors("email");
-                  }}
-                />
-                {errors.email && (
-                  <p className="text-red-400">
-                    {errors.email.message === "Invalid email address"
-                      ? "Email inválido"
-                      : errors.email.message}
-                  </p>
-                )}
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Senha</Label>
-                </div>
-                <PasswordInput
-                  id="password"
-                  placeholder="******"
-                  {...register("password")}
-                  onChange={() => {
-                    clearErrors("password");
-                  }}
-                />
-              </div>
+          <div className="flex flex-col gap-6">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="string"
+                placeholder="fernando@email.com"
+                {...register("email")}
+                onChange={() => {
+                  clearErrors("email");
+                }}
+              />
+              {errors.email && (
+                <p className="text-red-400">
+                  {errors.email.message === "Invalid email address"
+                    ? "Email inválido"
+                    : errors.email.message}
+                </p>
+              )}
             </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Senha</Label>
+              </div>
+              <PasswordInput
+                id="password"
+                placeholder="******"
+                {...register("password")}
+                onChange={() => {
+                  clearErrors("password");
+                }}
+              />
+            </div>
+            {loginError && <p className="text-red-400">{loginError}</p>}
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
