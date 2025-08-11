@@ -23,7 +23,7 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Get(':type?')
+  @Get(':type')
   async findAll(
     @Param('type', ParseIntPipe) type: string,
     @Request() req: AuthenticatedRequest,
@@ -31,7 +31,7 @@ export class CategoryController {
     const user: User = req.user;
     return this.categoryService.findAllByUserId(
       user.id,
-      type === 'income' ? 'income' : type === 'expense' ? 'expense' : undefined,
+      type === 'income' ? 'income' : type === 'expense' ? 'expense' : 'all',
     );
   }
 

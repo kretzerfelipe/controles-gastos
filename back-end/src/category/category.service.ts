@@ -14,7 +14,7 @@ export class CategoryService {
 
   async findAllByUserId(
     userId: number,
-    type?: 'income' | 'expense',
+    type?: 'income' | 'expense' | 'all',
   ): Promise<CategoryResponseDto> {
     const categories = await this.categoryRepository.findAllByUserId(
       userId,

@@ -7,7 +7,7 @@ export interface ICategoryRepository {
   findById(id: number): Promise<Category>;
   findAllByUserId(
     userId: number,
-    type?: 'income' | 'expense',
+    type?: 'income' | 'expense' | 'all',
   ): Promise<Category[]>;
   create(
     name: string,
@@ -38,10 +38,16 @@ export class CategoryRepository implements ICategoryRepository {
 
   async findAllByUserId(
     userId: number,
-    type?: 'income' | 'expense',
+    type?: 'income' | 'expense' | 'all',
   ): Promise<Category[]> {
+    const finalType =
+      type === 'income'
+        ? 'income'
+        : type === 'expense'
+          ? 'exmpense'
+          : undefined;
     const prismaCategories = await this.prisma.category.findMany({
-      where: { userId, ...(type ? { type } : {}) },
+      where: { userId, ...(finalType ? { type: finalType } : {}) },
     });
 
     if (!prismaCategories) {
