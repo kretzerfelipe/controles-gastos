@@ -1,3 +1,6 @@
+import * as bcrypt from 'bcrypt';
+import { User as PrismaUser } from '@prisma/client';
+
 export class User {
   private _id: number;
   private _name: string;
@@ -5,12 +8,29 @@ export class User {
   private _password: string;
   private _createdAt: Date;
 
-  constructor(id: number, name: string, email: string, password: string) {
+  constructor(
+    id: number,
+    name: string,
+    email: string,
+    password: string,
+    createdAt?: Date,
+  ) {
     this._id = id;
     this._name = name;
     this._email = email;
     this._password = password;
-    this._createdAt = new Date();
+    this._createdAt = createdAt || new Date();
+  }
+
+  // Factory method para criar User a partir do Prisma
+  static fromPrisma(prismaUser: PrismaUser): User {
+    return new User(
+      prismaUser.id,
+      prismaUser.name,
+      prismaUser.email,
+      prismaUser.password,
+      prismaUser.createdAt,
+    );
   }
 
   get id(): number {
@@ -33,7 +53,19 @@ export class User {
     return this._createdAt;
   }
 
-  toPublic(): object {
+  set name(newName: string) {
+    this._name = newName;
+  }
+
+  set email(newEmail: string) {
+    this._email = newEmail;
+  }
+
+  set password(newPassword: string) {
+    this._password = newPassword;
+  }
+
+  toPublic(): { id: number; name: string; email: string; createdAt: Date } {
     return {
       id: this._id,
       name: this._name,
@@ -42,7 +74,23 @@ export class User {
     };
   }
 
-  verifyPassword(password: string): boolean {
-    return this._password === password;
+  async verifyPassword(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this._password);
+  }
+
+  async hashPassword(): Promise<void> {
+    const saltRounds = 10;
+    this._password = await bcrypt.hash(this._password, saltRounds);
+  }
+
+  static async createWithHashedPassword(
+    id: number,
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<User> {
+    const user = new User(id, name, email, password);
+    await user.hashPassword();
+    return user;
   }
 }
