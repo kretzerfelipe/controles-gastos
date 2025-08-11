@@ -18,7 +18,7 @@ import { User } from '../common/entities/user.entity';
 import { Request as ExpressRequest } from 'express';
 import { JwtAuthGuard } from './guards/auth.guards';
 
-interface AuthenticatedRequest extends ExpressRequest {
+export interface AuthenticatedRequest extends ExpressRequest {
   user: User;
 }
 
