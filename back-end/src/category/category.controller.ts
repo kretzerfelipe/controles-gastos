@@ -25,7 +25,7 @@ export class CategoryController {
 
   @Get(':type')
   async findAll(
-    @Param('type', ParseIntPipe) type: string,
+    @Param('type') type: string,
     @Request() req: AuthenticatedRequest,
   ) {
     const user: User = req.user;
