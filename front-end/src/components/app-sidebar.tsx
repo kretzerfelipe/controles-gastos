@@ -37,7 +37,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { user } = useAuthContext();
+  const { user, setUser } = useAuthContext();
 
   return (
     <Sidebar>
@@ -67,6 +67,15 @@ export function AppSidebar() {
             <span className="flex-container text-sm text-muted-foreground">
               {user?.email}
             </span>
+          </Button>
+          <Button
+            variant={"secondary"}
+            onClick={() => {
+              setUser(undefined);
+              localStorage.removeItem("access_token");
+            }}
+          >
+            Sair
           </Button>
         </SidebarFooter>
       </SidebarContent>

@@ -3,35 +3,45 @@ import { router } from "./routes/routes";
 import "ldrs/react/Ring.css";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "./@types/user";
-import { useAuth } from "./queries/auth";
+import { getAuthMe } from "./api/auth/get-auth-me";
 import { Ring } from "ldrs/react";
 
-const AuthContext = createContext<
-  | { user: User | undefined; setUser: (user: User | undefined) => void }
-  | undefined
->(undefined);
+// Tipagem do contexto
+interface AuthContextValue {
+  user: User | undefined;
+  setUser: (user: User | undefined) => void;
+}
+
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function useAuthContext() {
   const context = useContext(AuthContext);
-  if (!context)
+  if (!context) {
     throw new Error("useAuthContext must be used inside AuthProvider");
+  }
   return context;
 }
 
 export function App() {
-  const { user: queryUser, query } = useAuth();
-
   const [user, setUser] = useState<User | undefined>(undefined);
-
-  console.log(user);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (queryUser) {
-      setUser(queryUser);
-    }
-  }, [queryUser]);
+    const fetchUser = async () => {
+      try {
+        const authUser = await getAuthMe();
+        setUser(authUser);
+      } catch {
+        setUser(undefined);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (query.isLoading) {
+    fetchUser();
+  }, []);
+
+  if (loading) {
     return (
       <div className="flex-container justify-center items-center h-screen">
         <Ring

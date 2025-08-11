@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DollarSign, Edit, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -33,100 +33,207 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { COLOR_CLASSES, ICON_CLASSES } from "@/const/const";
 import { DefaultIcon } from "@/components/default/default-icons";
+import { useCategory } from "@/queries/categories";
+import { Ring } from "ldrs/react";
+import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { createCategory } from "@/api/categories/create-category";
+import { queryClient } from "@/lib/react-query";
+import { useEffect, useState } from "react";
+import { deleteCategory } from "@/api/categories/delete-category";
+import type { Category } from "@/@types/category";
+import { updateCategory } from "@/api/categories/update-category";
 
 export function Settings() {
+  const { categories: incomeCategories, query: incomeQuery } =
+    useCategory("income");
+  const { categories: expenseCategories, query: expenseQuery } =
+    useCategory("expense");
+
+  const [openIncomeDialog, setOpenIncomeDialog] = useState(false);
+  const [openExpenseDialog, setOpenExpenseDialog] = useState(false);
+
   return (
     <DefaultPageWrapper className="content-start gap-5">
       <DefaultPageTitle title="Configurações" />
       <Separator />
       <div className="flex-container gap-5">
-        <div className="flex-container fill gap-5">
-          <div className="flex-container justify-between  items-center">
-            <h2 className="text-xl">Categorias de Receitas</h2>
-            <Dialog>
-              <DialogTrigger>
-                <Button>Adicionar categoria receita</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <IncomeCategoryForm />
-              </DialogContent>
-            </Dialog>
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Categoria</TableHead>
-                <TableHead>Nome</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <div className="flex size-8 bg-green-500 justify-center items-center rounded-full">
-                    <DollarSign className="size-5 stroke-primary" />
-                  </div>
-                </TableCell>
-                <TableCell>Salário</TableCell>
-                <TableCell>R$ 5.000,00</TableCell>
-                <TableCell className="w-30">
-                  <Button variant={"secondary"}>
-                    <Edit className="stroke-secondary-foreground" />
-                  </Button>
-                  <Button variant={"destructive"} className="ml-2">
-                    <Trash className="stroke-primary" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-        <Separator orientation="vertical" className="h-full" />
-        <div className="flex-container fill gap-5">
+        <div className="flex-container fill gap-5 content-start justify-center">
           <div className="flex-container justify-between items-center">
             <h2 className="text-xl">Categorias de Receitas</h2>
-            <Dialog>
+            <Dialog open={openIncomeDialog} onOpenChange={setOpenIncomeDialog}>
               <DialogTrigger>
                 <Button>Adicionar categoria receita</Button>
               </DialogTrigger>
               <DialogContent>
-                <ExpenseCategoryForm />
+                <IncomeCategoryForm
+                  onClose={() => setOpenIncomeDialog(false)}
+                />
               </DialogContent>
             </Dialog>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Categoria</TableHead>
-                <TableHead>Nome</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <div className="flex size-8 bg-green-500 justify-center items-center rounded-full">
-                    <DollarSign className="size-5 stroke-primary" />
-                  </div>
-                </TableCell>
-                <TableCell>Salário</TableCell>
-                <TableCell>R$ 5.000,00</TableCell>
-                <TableCell className="w-30">
-                  <Button variant={"secondary"}>
-                    <Edit className="stroke-secondary-foreground" />
-                  </Button>
-                  <Button variant={"destructive"} className="ml-2">
-                    <Trash className="stroke-primary" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          {incomeQuery.isLoading ? (
+            <Ring
+              size="20"
+              stroke="2.5"
+              bgOpacity="0"
+              speed="2"
+              color="var(--foreground)"
+            />
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Nome</TableHead>
+                  <TableHead>Cor</TableHead>
+                  <TableHead>Ícone</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {incomeCategories &&
+                  incomeCategories.map((c) => <CategoryTableRow {...c} />)}
+              </TableBody>
+            </Table>
+          )}
+        </div>
+        <Separator orientation="vertical" className="h-full" />
+        <div className="flex-container fill gap-5 content-start justify-center">
+          <div className="flex-container justify-between items-center">
+            <h2 className="text-xl">Categorias de Receitas</h2>
+            <Dialog
+              open={openExpenseDialog}
+              onOpenChange={setOpenExpenseDialog}
+            >
+              <DialogTrigger>
+                <Button>Adicionar categoria receita</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <ExpenseCategoryForm
+                  onClose={() => setOpenExpenseDialog(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+          {expenseQuery.isLoading ? (
+            <Ring
+              size="20"
+              stroke="2.5"
+              bgOpacity="0"
+              speed="2"
+              color="var(--foreground)"
+            />
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Nome</TableHead>
+                  <TableHead>Ícone</TableHead>
+                  <TableHead>Cor</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {expenseCategories &&
+                  expenseCategories.map((c) => <CategoryTableRow {...c} />)}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
     </DefaultPageWrapper>
+  );
+}
+
+function CategoryTableRow(c: Category) {
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: deleteCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["category", c._type],
+      });
+      setOpenDeleteDialog(false);
+    },
+    onError: (error) => {
+      console.error("Error creating course:", error);
+    },
+  });
+
+  const onDeleteClick = (id: number) => {
+    deleteCategoryMutation.mutateAsync({
+      id: id,
+    });
+  };
+
+  return (
+    <TableRow key={c._id}>
+      <TableCell>{c._name}</TableCell>
+      <TableCell className="font-medium">
+        <DefaultIcon icon={c._icon} className="size-5 stroke-primary" />
+      </TableCell>
+      <TableCell>
+        <div
+          className={cn(
+            "flex size-8 justify-center items-center rounded-full",
+            COLOR_CLASSES[c._color]
+          )}
+        />
+      </TableCell>
+      <TableCell className="w-30">
+        <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+          <DialogTrigger>
+            <Button variant={"secondary"}>
+              <Edit className="stroke-secondary-foreground" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            {c._type === "income" ? (
+              <IncomeCategoryForm
+                onClose={() => setOpenEditDialog(false)}
+                categoryToEdit={c}
+              />
+            ) : (
+              <ExpenseCategoryForm
+                onClose={() => setOpenEditDialog(false)}
+                categoryToEdit={c}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+        <div className="inline-flex w-2" />
+        <Dialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+          <DialogTrigger>
+            <Button variant={"destructive"} className="ml-2">
+              <Trash className="stroke-primary" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader className="gap-5">
+              <DialogTitle>
+                Você tem certeza que deseja deletar o conteúdo: {c._name}
+              </DialogTitle>
+              <DialogFooter>
+                <Button
+                  variant={"secondary"}
+                  onClick={() => setOpenDeleteDialog(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  variant={"destructive"}
+                  onClick={() => onDeleteClick(c._id)}
+                >
+                  Deletar
+                </Button>
+              </DialogFooter>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </TableCell>
+    </TableRow>
   );
 }
 
@@ -136,7 +243,13 @@ const expenseCategorySchema = z.object({
   icon: z.enum(Object.keys(ICON_CLASSES)),
 });
 
-function ExpenseCategoryForm() {
+function ExpenseCategoryForm({
+  onClose,
+  categoryToEdit,
+}: {
+  onClose: () => void;
+  categoryToEdit?: Category;
+}) {
   const {
     register,
     handleSubmit,
@@ -144,6 +257,7 @@ function ExpenseCategoryForm() {
     clearErrors,
     setValue,
     watch,
+    reset,
   } = useForm({
     resolver: zodResolver(expenseCategorySchema),
     defaultValues: {
@@ -152,15 +266,84 @@ function ExpenseCategoryForm() {
     },
   });
 
+  const [acting, setActing] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      reset({
+        color: categoryToEdit?._color as keyof typeof COLOR_CLASSES,
+        icon: categoryToEdit?._icon as keyof typeof ICON_CLASSES,
+        name: categoryToEdit?._name,
+      });
+    }, 100);
+  }, [categoryToEdit]);
+
   const color = watch("color");
   const icon = watch("icon");
 
+  const createCategoryMutation = useMutation({
+    mutationFn: createCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["category", "expense"],
+      });
+      setActing(false);
+      onClose();
+    },
+    onError: (error) => {
+      setActing(false);
+      console.error("Error creating course:", error);
+    },
+  });
+
+  const editCategoryMutation = useMutation({
+    mutationFn: updateCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["category", "expense"],
+      });
+      setActing(false);
+      onClose();
+    },
+    onError: (error) => {
+      setActing(false);
+      console.error("Error creating course:", error);
+    },
+  });
+
   const onSubmit = (data: z.infer<typeof expenseCategorySchema>) => {
-    console.log(data);
+    setActing(true);
+    if (categoryToEdit) {
+      const c = {
+        ...data,
+        id: categoryToEdit._id,
+      };
+      editCategoryMutation.mutateAsync(c);
+    } else {
+      const c = {
+        ...data,
+        type: "expense" as const,
+      };
+      createCategoryMutation.mutateAsync(c);
+    }
   };
 
   return (
-    <form className="flex-container gap-6" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="flex-container gap-6 relative"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      {acting && (
+        <div className="flex-container h-full absolute justify-center items-center bg-background z-10000">
+          <Ring
+            size="40"
+            stroke="5"
+            bgOpacity="0"
+            speed="2"
+            color="var(--foreground)"
+          />
+        </div>
+      )}
       <DialogHeader>
         <DialogTitle>Formulário de Categoria de Despesa</DialogTitle>
       </DialogHeader>
@@ -237,7 +420,13 @@ const incomeCategorySchema = z.object({
   icon: z.enum(Object.keys(ICON_CLASSES)),
 });
 
-function IncomeCategoryForm() {
+function IncomeCategoryForm({
+  onClose,
+  categoryToEdit,
+}: {
+  onClose: () => void;
+  categoryToEdit?: Category;
+}) {
   const {
     register,
     handleSubmit,
@@ -245,6 +434,7 @@ function IncomeCategoryForm() {
     clearErrors,
     setValue,
     watch,
+    reset,
   } = useForm({
     resolver: zodResolver(incomeCategorySchema),
     defaultValues: {
@@ -253,15 +443,84 @@ function IncomeCategoryForm() {
     },
   });
 
+  const [acting, setActing] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      reset({
+        color: categoryToEdit?._color as keyof typeof COLOR_CLASSES,
+        icon: categoryToEdit?._icon as keyof typeof ICON_CLASSES,
+        name: categoryToEdit?._name,
+      });
+    }, 100);
+  }, [categoryToEdit]);
+
   const color = watch("color");
   const icon = watch("icon");
 
+  const createCategoryMutation = useMutation({
+    mutationFn: createCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["category", "income"],
+      });
+      setActing(false);
+      onClose();
+    },
+    onError: (error) => {
+      setActing(false);
+      console.error("Error creating course:", error);
+    },
+  });
+
+  const editCategoryMutation = useMutation({
+    mutationFn: updateCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["category", "income"],
+      });
+      setActing(false);
+      onClose();
+    },
+    onError: (error) => {
+      setActing(false);
+      console.error("Error creating course:", error);
+    },
+  });
+
   const onSubmit = (data: z.infer<typeof incomeCategorySchema>) => {
-    console.log(data);
+    setActing(true);
+    if (categoryToEdit) {
+      const c = {
+        ...data,
+        id: categoryToEdit._id,
+      };
+      editCategoryMutation.mutateAsync(c);
+    } else {
+      const c = {
+        ...data,
+        type: "income" as const,
+      };
+      createCategoryMutation.mutateAsync(c);
+    }
   };
 
   return (
-    <form className="flex-container gap-6" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="flex-container gap-6 relative"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      {acting && (
+        <div className="flex-container h-full absolute justify-center items-center bg-background z-10000">
+          <Ring
+            size="40"
+            stroke="5"
+            bgOpacity="0"
+            speed="2"
+            color="var(--foreground)"
+          />
+        </div>
+      )}
       <DialogHeader>
         <DialogTitle>Formulário de Categoria de Receita</DialogTitle>
       </DialogHeader>

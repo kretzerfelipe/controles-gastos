@@ -1,22 +1,21 @@
 import { api } from "../axios";
 import type { Category } from "@/@types/category";
 
-export const createCategory = async ({
+export const updateCategory = async ({
+  id,
   name,
   color,
   icon,
-  type,
 }: {
+  id: number;
   name: string;
   color: string;
   icon: string;
-  type: "income" | "expense";
 }): Promise<Category> => {
-  const response = await api.post<{ category: Category }>(`/category`, {
+  const response = await api.put<{ category: Category }>(`/category/${id}`, {
     name,
     color,
     icon,
-    type,
   });
 
   return response.data.category;

@@ -4,7 +4,7 @@ import { useAuthContext } from "@/app";
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user } = useAuthContext();
-  if (!user) {
+  if (!user?.id) {
     return <Navigate to="/login" />;
   }
   return <>{children}</>;
@@ -12,7 +12,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
 
 export function NonProtectedRoute({ children }: { children: ReactNode }) {
   const { user } = useAuthContext();
-  if (user) {
+  if (user?.id) {
     return <Navigate to="/" />;
   }
   return <>{children}</>;
