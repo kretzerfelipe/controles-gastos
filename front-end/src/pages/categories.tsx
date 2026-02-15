@@ -31,8 +31,16 @@ import {
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { COLOR_CLASSES, ICON_CLASSES } from "@/const/const";
-import { DefaultIcon } from "@/components/default/default-icons";
+import {
+  COLOR_CLASSES,
+  ICON_CLASSES,
+  type ColorClasses,
+  type IconClasses,
+} from "@/const/const";
+import {
+  DefaultIcon,
+  defaultIconName,
+} from "@/components/default/default-icons";
 import { useCategory } from "@/queries/categories";
 import { Ring } from "ldrs/react";
 import { cn } from "@/lib/utils";
@@ -44,7 +52,7 @@ import { deleteCategory } from "@/api/categories/delete-category";
 import type { Category } from "@/@types/category";
 import { updateCategory } from "@/api/categories/update-category";
 
-export function Settings() {
+export function Categories() {
   const { categories: incomeCategories, query: incomeQuery } =
     useCategory("income");
   const { categories: expenseCategories, query: expenseQuery } =
@@ -55,7 +63,7 @@ export function Settings() {
 
   return (
     <DefaultPageWrapper className="content-start gap-5">
-      <DefaultPageTitle title="Configurações" />
+      <DefaultPageTitle title="Categorias" />
       <Separator />
       <div className="flex-container gap-5">
         <div className="flex-container fill gap-5 content-start justify-center">
@@ -178,7 +186,7 @@ function CategoryTableRow(c: Category) {
         <div
           className={cn(
             "flex size-8 justify-center items-center rounded-full",
-            COLOR_CLASSES[c._color]
+            c._color
           )}
         />
       </TableCell>
@@ -237,10 +245,10 @@ function CategoryTableRow(c: Category) {
   );
 }
 
-const expenseCategorySchema = z.object({
+const categorySchema = z.object({
   name: z.string().min(2).max(100),
-  color: z.enum(Object.keys(COLOR_CLASSES)),
-  icon: z.enum(Object.keys(ICON_CLASSES)),
+  color: z.enum(COLOR_CLASSES),
+  icon: z.enum(ICON_CLASSES),
 });
 
 function ExpenseCategoryForm({
@@ -259,10 +267,10 @@ function ExpenseCategoryForm({
     watch,
     reset,
   } = useForm({
-    resolver: zodResolver(expenseCategorySchema),
+    resolver: zodResolver(categorySchema),
     defaultValues: {
-      color: "gray",
-      icon: "money",
+      color: COLOR_CLASSES.gray,
+      icon: ICON_CLASSES.money,
     },
   });
 
@@ -271,8 +279,8 @@ function ExpenseCategoryForm({
   useEffect(() => {
     setTimeout(() => {
       reset({
-        color: (categoryToEdit?._color as keyof typeof COLOR_CLASSES) || "gray",
-        icon: (categoryToEdit?._icon as keyof typeof ICON_CLASSES) || "money",
+        color: categoryToEdit?._color || COLOR_CLASSES.gray,
+        icon: categoryToEdit?._icon || ICON_CLASSES.money,
         name: categoryToEdit?._name || "",
       });
     }, 10);
@@ -311,7 +319,7 @@ function ExpenseCategoryForm({
     },
   });
 
-  const onSubmit = (data: z.infer<typeof expenseCategorySchema>) => {
+  const onSubmit = (data: z.infer<typeof categorySchema>) => {
     setActing(true);
     if (categoryToEdit) {
       const c = {
@@ -375,16 +383,16 @@ function ExpenseCategoryForm({
         <Label>Cor</Label>
         <Select
           value={color}
-          onValueChange={(value) => setValue("color", value)}
+          onValueChange={(value: ColorClasses) => setValue("color", value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {Object.keys(COLOR_CLASSES).map((color) => (
-              <SelectItem key={color} value={color}>
-                <div className={`flex size-6 ${COLOR_CLASSES[color]}`} />
-                {color}
+            {Object.entries(COLOR_CLASSES).map(([key, value]) => (
+              <SelectItem key={key} value={value}>
+                <div className={`flex size-6 ${value}`} />
+                {key}
               </SelectItem>
             ))}
           </SelectContent>
@@ -392,14 +400,20 @@ function ExpenseCategoryForm({
       </div>
       <div className="flex-container gap-2">
         <Label>Ícone</Label>
-        <Select value={icon} onValueChange={(value) => setValue("icon", value)}>
+        <Select
+          value={icon}
+          onValueChange={(value: IconClasses) => setValue("icon", value)}
+        >
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {Object.keys(ICON_CLASSES).map((icon) => (
-              <SelectItem key={icon} value={icon}>
-                <DefaultIcon icon={icon} />
+            {Object.entries(ICON_CLASSES).map(([key, value]) => (
+              <SelectItem key={key} value={value}>
+                <div className="flex items-center gap-2">
+                  <DefaultIcon icon={value} size={18} />
+                  <span>{defaultIconName(value)}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
@@ -413,12 +427,6 @@ function ExpenseCategoryForm({
     </form>
   );
 }
-
-const incomeCategorySchema = z.object({
-  name: z.string().min(2).max(100),
-  color: z.enum(Object.keys(COLOR_CLASSES)),
-  icon: z.enum(Object.keys(ICON_CLASSES)),
-});
 
 function IncomeCategoryForm({
   onClose,
@@ -436,10 +444,10 @@ function IncomeCategoryForm({
     watch,
     reset,
   } = useForm({
-    resolver: zodResolver(incomeCategorySchema),
+    resolver: zodResolver(categorySchema),
     defaultValues: {
-      color: "gray",
-      icon: "money",
+      color: COLOR_CLASSES.gray,
+      icon: ICON_CLASSES.money,
     },
   });
 
@@ -448,8 +456,8 @@ function IncomeCategoryForm({
   useEffect(() => {
     setTimeout(() => {
       reset({
-        color: (categoryToEdit?._color as keyof typeof COLOR_CLASSES) || "gray",
-        icon: (categoryToEdit?._icon as keyof typeof ICON_CLASSES) || "money",
+        color: categoryToEdit?._color || COLOR_CLASSES.gray,
+        icon: categoryToEdit?._icon || ICON_CLASSES.money,
         name: categoryToEdit?._name || "",
       });
     }, 10);
@@ -488,7 +496,7 @@ function IncomeCategoryForm({
     },
   });
 
-  const onSubmit = (data: z.infer<typeof incomeCategorySchema>) => {
+  const onSubmit = (data: z.infer<typeof categorySchema>) => {
     setActing(true);
     if (categoryToEdit) {
       const c = {
@@ -552,16 +560,16 @@ function IncomeCategoryForm({
         <Label>Cor</Label>
         <Select
           value={color}
-          onValueChange={(value) => setValue("color", value)}
+          onValueChange={(value: ColorClasses) => setValue("color", value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {Object.keys(COLOR_CLASSES).map((color) => (
-              <SelectItem key={color} value={color}>
-                <div className={`flex size-6 ${COLOR_CLASSES[color]}`} />
-                {color}
+            {Object.entries(COLOR_CLASSES).map(([key, value]) => (
+              <SelectItem key={key} value={value}>
+                <div className={`flex size-6 ${value}`} />
+                {key}
               </SelectItem>
             ))}
           </SelectContent>
@@ -569,14 +577,20 @@ function IncomeCategoryForm({
       </div>
       <div className="flex-container gap-2">
         <Label>Ícone</Label>
-        <Select value={icon} onValueChange={(value) => setValue("icon", value)}>
+        <Select
+          value={icon}
+          onValueChange={(value: IconClasses) => setValue("icon", value)}
+        >
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {Object.keys(ICON_CLASSES).map((icon) => (
-              <SelectItem key={icon} value={icon}>
-                <DefaultIcon icon={icon} />
+            {Object.entries(ICON_CLASSES).map(([key, value]) => (
+              <SelectItem key={key} value={value}>
+                <div className="flex items-center gap-2">
+                  <DefaultIcon icon={value} size={18} />
+                  <span>{defaultIconName(value)}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>

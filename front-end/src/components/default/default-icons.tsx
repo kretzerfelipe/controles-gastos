@@ -1,4 +1,4 @@
-import type { ICON_CLASSES } from "@/const/const";
+import { ICON_CLASSES, type IconClasses } from "@/const/const";
 import {
   DollarSign,
   Utensils,
@@ -13,17 +13,29 @@ import {
 } from "lucide-react";
 
 type DefaultIconProps = {
-  icon: keyof typeof ICON_CLASSES;
+  icon: IconClasses;
 } & LucideProps;
 
+export function defaultIconName(icon: IconClasses) {
+  if (icon === ICON_CLASSES.money) return "Dinheiro";
+  if (icon === ICON_CLASSES.food) return "Comida";
+  if (icon === ICON_CLASSES.transport) return "Tranporte";
+  if (icon === ICON_CLASSES.house) return "Casa";
+  if (icon === ICON_CLASSES.health) return "Saúde";
+  if (icon === ICON_CLASSES.education) return "Educação";
+  if (icon === ICON_CLASSES.entertainment) return "Entretenimento";
+  if (icon === ICON_CLASSES.travel) return "Viagem";
+  if (icon === ICON_CLASSES.other) return "Outros";
+}
+
 export function DefaultIcon({ icon, ...props }: DefaultIconProps) {
-  if (icon === "money") return <DollarSign {...props} />;
-  if (icon === "food") return <Utensils {...props} />;
-  if (icon === "transport") return <BusFront {...props} />;
-  if (icon === "house") return <House {...props} />;
-  if (icon === "health") return <HeartPlus {...props} />;
-  if (icon === "education") return <GraduationCap {...props} />;
-  if (icon === "entertainment") return <Gamepad2 {...props} />;
-  if (icon === "travel") return <Plane {...props} />;
-  if (icon === "other") return <MoreHorizontal {...props} />;
+  if (icon === ICON_CLASSES.money) return <DollarSign {...props} />;
+  if (icon === ICON_CLASSES.food) return <Utensils {...props} />;
+  if (icon === ICON_CLASSES.transport) return <BusFront {...props} />;
+  if (icon === ICON_CLASSES.house) return <House {...props} />;
+  if (icon === ICON_CLASSES.health) return <HeartPlus {...props} />;
+  if (icon === ICON_CLASSES.education) return <GraduationCap {...props} />;
+  if (icon === ICON_CLASSES.entertainment) return <Gamepad2 {...props} />;
+  if (icon === ICON_CLASSES.travel) return <Plane {...props} />;
+  if (icon === ICON_CLASSES.other) return <MoreHorizontal {...props} />;
 }
