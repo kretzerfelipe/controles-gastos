@@ -5,8 +5,9 @@ import { Login } from "@/pages/login";
 import { Signup } from "@/pages/signup";
 import { Income } from "@/pages/income";
 import { Expense } from "@/pages/expense";
-import { Settings } from "@/pages/settings";
+import { Categories } from "@/pages/categories";
 import { NonProtectedRoute, ProtectedRoute } from "./protected-route";
+import { Accounts } from "@/pages/accounts";
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +21,8 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/income", element: <Income /> },
       { path: "/expense", element: <Expense /> },
-      { path: "/settings", element: <Settings /> },
+      { path: "/categories", element: <Categories /> },
+      { path: "/accounts", element: <Accounts /> },
     ],
   },
   {

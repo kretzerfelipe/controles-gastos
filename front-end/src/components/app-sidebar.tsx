@@ -1,4 +1,10 @@
-import { Home, DollarSign, ShoppingBagIcon, Settings } from "lucide-react";
+import {
+  Home,
+  DollarSign,
+  ShoppingBagIcon,
+  LayoutGrid,
+  Landmark,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -12,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthContext } from "@/app";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router";
 
 const items = [
   {
@@ -30,14 +37,20 @@ const items = [
     icon: ShoppingBagIcon,
   },
   {
-    title: "Configurações",
-    url: "/settings",
-    icon: Settings,
+    title: "Categorias",
+    url: "/categories",
+    icon: LayoutGrid,
+  },
+  {
+    title: "Contas",
+    url: "/accounts",
+    icon: Landmark,
   },
 ];
 
 export function AppSidebar() {
   const { user, setUser } = useAuthContext();
+  const navigate = useNavigate();
 
   return (
     <Sidebar>
@@ -48,7 +61,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="h-7">
-                    <a href={item.url}>
+                    <a onClick={() => navigate(item.url)}>
                       <item.icon />
                       <span>{item.title}</span>
                     </a>
