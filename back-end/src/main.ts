@@ -1,13 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { env } from 'process';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const configService = app.get(ConfigService)
-  const frontendUrl = configService.get<string>('FRONT_END_URL')
+  const configService = app.get(ConfigService);
+  const frontendUrl = configService.get<string>('FRONT_END_URL');
 
   app.enableCors({
     origin: frontendUrl, // Coloque a URL do seu frontend aqui

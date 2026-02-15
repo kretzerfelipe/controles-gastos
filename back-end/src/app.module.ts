@@ -5,11 +5,14 @@ import { CategoryModule } from './category/category.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true, // torna disponível em todo o app
-  }),
-    AuthModule, CategoryModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // torna disponível em todo o app
+    }),
+    AuthModule,
+    CategoryModule,
+  ],
   providers: [PrismaService],
   exports: [PrismaService],
 })
-export class AppModule { }
+export class AppModule {}
