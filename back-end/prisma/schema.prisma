@@ -11,7 +11,16 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  INVESTMENT
+  BENEFIT
+  CASH
+  CREDIT_CARD
+  OTHER
 }
 
 model User {
@@ -20,11 +29,12 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  // Relationships
   categories Category[]
   expenses   Expense[]
   incomes    Income[]
+  accounts   Account[]
 
   @@map("users")
 }
@@ -37,43 +47,70 @@ model Category {
   type      String
   userId    Int      @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  // Relationships
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expenses Expense[]
   incomes  Income[]
 
+  @@index([userId])
   @@map("categories")
 }
 
 model Expense {
   id          Int      @id @default(autoincrement())
   description String
-  amount      Float
+  amount      Decimal
   date        DateTime
   userId      Int      @map("user_id")
-  categoryId  Int      @map("category_id")
+  categoryId  Int?     @map("category_id")
+  accountId   Int?     @map("account_id")
   createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  // Relationships
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  account  Account?  @relation(fields: [accountId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
   @@map("expenses")
 }
 
 model Income {
   id          Int      @id @default(autoincrement())
   description String
-  amount      Float
+  amount      Decimal
   date        DateTime
   userId      Int      @map("user_id")
-  categoryId  Int      @map("category_id")
+  categoryId  Int?     @map("category_id")
+  accountId   Int?     @map("account_id")
   createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  // Relationships
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  account  Account?  @relation(fields: [accountId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
   @@map("incomes")
+}
+
+model Account {
+  id                 Int         @id @default(autoincrement())
+  description        String
+  openingBalance     Decimal
+  openingBalanceDate DateTime
+  bank               String?
+  type               AccountType
+  color              String
+  userId             Int         @map("user_id")
+  createdAt          DateTime    @default(now()) @map("created_at")
+  updatedAt          DateTime    @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses Expense[]
+  incomes  Income[]
+
+  @@index([userId])
+  @@map("accounts")
 }
