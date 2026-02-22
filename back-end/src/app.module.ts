@@ -3,12 +3,14 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaService } from './database/prisma.service';
 import { CategoryModule } from './category/category.module';
 import { ConfigModule } from '@nestjs/config';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // torna disponível em todo o app
+      isGlobal: true,
     }),
+    AccountModule,
     AuthModule,
     CategoryModule,
   ],

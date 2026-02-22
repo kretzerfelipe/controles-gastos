@@ -1,10 +1,5 @@
 import { Category } from 'src/common/entities/category.entity';
 
-export class LoginDto {
-  email: string;
-  password: string;
-}
-
 export class CreateCategoryDto {
   name: string;
   color: string;

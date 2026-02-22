@@ -8,6 +8,7 @@ export class Category {
   private _type: 'income' | 'expense';
   private _userId: number;
   private _createdAt: Date;
+  private _updatedAt: Date;
 
   constructor(
     id: number,
@@ -17,6 +18,7 @@ export class Category {
     type: 'income' | 'expense',
     userId: number,
     createdAt?: Date,
+    updatedAt?: Date,
   ) {
     this._id = id;
     this._name = name;
@@ -25,6 +27,7 @@ export class Category {
     this._type = type;
     this._userId = userId;
     this._createdAt = createdAt || new Date();
+    this._updatedAt = updatedAt || new Date();
   }
 
   static fromPrisma(prismaCategory: PrismaCategory): Category {
@@ -36,6 +39,7 @@ export class Category {
       prismaCategory.type as 'income' | 'expense',
       prismaCategory.userId,
       prismaCategory.createdAt,
+      prismaCategory.updatedAt,
     );
   }
 
@@ -67,6 +71,10 @@ export class Category {
     return this._createdAt;
   }
 
+  get updatedAt(): Date {
+    return this._createdAt;
+  }
+
   set name(newName: string) {
     this._name = newName;
   }
@@ -81,5 +89,9 @@ export class Category {
 
   set userId(newUserId: number) {
     this._userId = newUserId;
+  }
+
+  private _touch() {
+    this._updatedAt = new Date();
   }
 }

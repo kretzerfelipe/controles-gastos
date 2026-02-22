@@ -2,7 +2,7 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { PrismaService } from 'src/database/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;

@@ -7,6 +7,7 @@ export class User {
   private _email: string;
   private _password: string;
   private _createdAt: Date;
+  private _updatedAt: Date;
 
   constructor(
     id: number,
@@ -14,12 +15,14 @@ export class User {
     email: string,
     password: string,
     createdAt?: Date,
+    updatedAt?: Date,
   ) {
     this._id = id;
     this._name = name;
     this._email = email;
     this._password = password;
     this._createdAt = createdAt || new Date();
+    this._updatedAt = updatedAt || new Date();
   }
 
   // Factory method para criar User a partir do Prisma
@@ -30,6 +33,7 @@ export class User {
       prismaUser.email,
       prismaUser.password,
       prismaUser.createdAt,
+      prismaUser.updatedAt,
     );
   }
 
@@ -51,6 +55,10 @@ export class User {
 
   get createdAt(): Date {
     return this._createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this._updatedAt;
   }
 
   set name(newName: string) {

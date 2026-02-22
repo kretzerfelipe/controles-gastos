@@ -1,21 +1,23 @@
+import { AccountType } from '@prisma/client';
 import { Account } from 'src/common/entities/account.entity';
 
-export class LoginDto {
-  email: string;
-  password: string;
-}
-
 export class CreateAccountDto {
-  name: string;
+  description: string;
+  openingBalance: number;
+  openingBalanceDate: Date;
+  bank: string | null;
+  type: AccountType;
   color: string;
-  icon: string;
-  type: 'income' | 'expense';
+  userId: number;
 }
 
 export class UpdateAccountDto {
-  name?: string;
+  description?: string;
+  openingBalance?: number;
+  openingBalanceDate?: Date;
+  bank?: string | null;
+  type?: AccountType;
   color?: string;
-  icon?: string;
 }
 
 export class AccountResponseDto {

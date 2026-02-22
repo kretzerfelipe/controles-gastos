@@ -13,46 +13,40 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guards';
-import { CategoryService } from './category.service';
+import { AccountService } from './account.service';
 import { type AuthenticatedRequest } from 'src/auth/auth.controller';
 import { User } from 'src/common/entities/user.entity';
-import { CreateCategoryDto, UpdateCategoryDto } from './dto/account.dto';
+import { CreateAccountDto, UpdateAccountDto } from './dto/account.dto';
 
-@Controller('category')
+@Controller('account')
 @UseGuards(JwtAuthGuard)
-export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+export class AccountController {
+  constructor(private readonly accountService: AccountService) {}
 
-  @Get(':type')
-  async findAll(
-    @Param('type') type: string,
-    @Request() req: AuthenticatedRequest,
-  ) {
+  @Get()
+  async findAll(@Request() req: AuthenticatedRequest) {
     const user: User = req.user;
-    return this.categoryService.findAllByUserId(
-      user.id,
-      type === 'income' ? 'income' : type === 'expense' ? 'expense' : 'all',
-    );
+    return this.accountService.findAllByUserId(user.id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @Body() createCategoryDto: CreateCategoryDto,
+    @Body() createAccountDto: CreateAccountDto,
     @Request() req: AuthenticatedRequest,
   ) {
     const user: User = req.user;
-    return this.categoryService.create(createCategoryDto, user.id);
+    return this.accountService.create(createAccountDto, user.id);
   }
 
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateCategoryDto: UpdateCategoryDto,
+    @Body() updateAccountDto: UpdateAccountDto,
     @Request() req: AuthenticatedRequest,
   ) {
     const user: User = req.user;
-    return this.categoryService.update(id, updateCategoryDto, user.id);
+    return this.accountService.update(id, updateAccountDto, user.id);
   }
 
   @Delete(':id')
@@ -62,6 +56,6 @@ export class CategoryController {
     @Request() req: AuthenticatedRequest,
   ) {
     const user: User = req.user;
-    await this.categoryService.delete(id, user.id);
+    await this.accountService.delete(id, user.id);
   }
 }
